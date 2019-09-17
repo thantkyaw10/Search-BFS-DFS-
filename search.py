@@ -62,9 +62,9 @@ class SearchProblem:
         util.raiseNotDefined()
 
 class node:
-    def __init__(self, parent, state, cost = 0, action = 0):
+    def __init__(self, state, cost = 0, action = 0, parent = 0):
         # Initializes node, set cost to 0 if none provided
-        # Initialize action to 0 if startState node
+        # Initialize action and parent to 0 if startState node
         # Action, state and cost are from getSuccessors
         self.parent = parent # Is a node
         self.action = action 
@@ -111,7 +111,25 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    
+    startNode = node(problem.getStartState)# Initialize start node
+    if problem.isGoalState(startNode.state):
+        return [] # Return empty list if start is solution (no actions taken)
+    frontier = util.Queue().push(startNode) # Initialize frontier with startNode
+    explored = set()
+    while not frontier.isEmpty():
+        cnode = frontier.pop() # Pops shallowest node
+        if problem.isGoalState(cnode.state): # Checks goal state
+            return cnode.getPath()
+        explored.add(cnode) # Add node to explored set
+        for succ in problem.getSuccessors(cnode.state): # Iterate through successors, making a child node for each
+            child = node(succ[0], succ[2], succ[1], node) # Initialize child node
+            if child not in explored: # Adds child to frontier if not in explored 
+                frontier.push(child)
+    return #failure (but what is the return for failure?)
+
+            
+
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
