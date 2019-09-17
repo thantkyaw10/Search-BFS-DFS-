@@ -107,7 +107,42 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+def depthFirstSearch(problem):
+    """
+    Search the deepest nodes in the search tree first.
+
+    Your search algorithm needs to return a list of actions that reaches the
+    goal. Make sure to implement a graph search algorithm.
+
+    To get started, you might want to try some of these simple commands to
+    understand the search problem that is being passed in:
+
+    print "Start:", problem.getStartState()
+    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    """
+    "*** YOUR CODE HERE ***"
+    #util.raiseNotDefined()
+    explored = [] #list for states already explored
+    frontier = util.Stack() #using stack data structure
+
+    current = [problem.getStartState(), []] #format: [current state exploring, path or actions from initial to current]
+    initialTo = util.Stack() #holds paths of each successecor getting explored; for them to then get explored
+
+    #"Loop do" in psuedo code:
+    while not frontier.isEmpty(): #"if empty? (frontier) then return failure"
+        if problem.isGoalState(current[0]): #"if problem.goal-test(state)...
+            return current[1]               # ...then return solution"
+        if current not in explored: #"If node.state not in explored:"
+            explored.append(current[0]) #"add node to explored"
+            for succ,action,cost in (problem.getSuccessors(current[0])): #add node's children to frontier
+                frontier.push(succ)
+                initialTo.push(current[1] + [action])
+        #go on to set the next to look at:
+        temp0 = frontier.pop()
+        temp1 = initialTo.pop()
+        current = [temp0, temp1]
+    return None #if frontier is empty and cannot find any solution for the given problem / start state
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
