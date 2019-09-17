@@ -74,7 +74,7 @@ class node:
     def getPath(self):
         path = []
         cnode = self # Sets current node to self
-        while (self.parent.action != 0):
+        while (cnode.action != 0):
             path.append(cnode.action) # Append current node's action to path
             cnode = self.parent # Set current node to parent
         return path.reverse
