@@ -61,6 +61,25 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
+class node:
+    def __init__(self, parent, state, cost = 0, action = 0):
+        # Initializes node, set cost to 0 if none provided
+        # Initialize action to 0 if startState node
+        # Action, state and cost are from getSuccessors
+        self.parent = parent # Is a node
+        self.action = action 
+        self.cost = cost
+        self.state = state 
+
+    def getPath(self):
+        path = []
+        cnode = self # Sets current node to self
+        while (self.parent.action != 0):
+            path.append(cnode.action) # Append current node's action to path
+            cnode = self.parent # Set current node to parent
+        return path.reverse
+
+
 
 def tinyMazeSearch(problem):
     """
@@ -71,6 +90,7 @@ def tinyMazeSearch(problem):
     s = Directions.SOUTH
     w = Directions.WEST
     return  [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem):
     """
@@ -91,8 +111,7 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
