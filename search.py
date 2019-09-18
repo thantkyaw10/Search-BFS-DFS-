@@ -129,23 +129,30 @@ def depthFirstSearch(problem):
         current = [temp0, temp1]
     return None #if frontier is empty and cannot find any solution for the given problem / start state
 
+#Appending current[0] but checking for entire current, so check always returns true
+#Fix order of checking/popping
+#Maybe turn current into tuple and have first element be list, so no adding / modifying can be done
+
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     startNode = node(problem.getStartState)# Initialize start node
     if problem.isGoalState(startNode.state):
         return [] # Return empty list if start is solution (no actions taken)
-    frontier = util.Queue().push(startNode) # Initialize frontier with startNode
+    frontier = util.Queue()
+    frontier.push(startNode) # Initialize frontier with startNode
     explored = set()
     while not frontier.isEmpty():
         cnode = frontier.pop() # Pops shallowest node
         if problem.isGoalState(cnode.state): # Checks goal state
             return cnode.getPath()
         explored.add(cnode) # Add node to explored set
-        for succ in problem.getSuccessors(cnode.state): # Iterate through successors, making a child node for each
-            child = node(succ[0], succ[2], succ[1], node) # Initialize child node
-            if child not in explored: # Adds child to frontier if not in explored 
-                frontier.push(child)
-    return #failure (but what is the return for failure?)
+        succs = problem.getSuccessors(cnode.state)
+        print(succs)
+        # for succ in succs: # Iterate through successors, making a child node for each
+        #     child = node(succ[0], succ[2], succ[1], cnode) # Initialize child node
+        #     if child not in explored: # Adds child to frontier if not in explored 
+        #         frontier.push(child)
+    return None
 
             
 
