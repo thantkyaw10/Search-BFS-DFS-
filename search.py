@@ -165,7 +165,7 @@ def uniformCostSearch(problem):
     frontier.push(startNode, 0) # Initialize frontier with startNode
     explored = set()
     while not frontier.isEmpty():
-        cnode = frontier.pop() # Pops shallowest node
+        cnode = frontier.pop() # Pops cheapest node
         if problem.isGoalState(cnode.state): # Checks goal state
             return cnode.getPath()
         if cnode.state not in explored:
@@ -173,7 +173,7 @@ def uniformCostSearch(problem):
             for succ in problem.getSuccessors(cnode.state): # Iterate through successors, making a child node for each
                 child = node(succ[0], succ[2], succ[1], cnode) # Initialize child node
                 if child.state not in explored: # Adds child to frontier if not in explored 
-                    frontier.push(child, child.getPathCost()) #Problem needs to be fixed
+                    frontier.push(child, child.getPathCost()) #Pushes onto frontier with cost
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -182,12 +182,6 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
-
-def manhattanHeuristic(position, problem, info={}):
-    "The Manhattan distance heuristic for a PositionSearchProblem"
-    xy1 = position
-    xy2 = problem.goal
-    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
@@ -206,7 +200,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             for succ in problem.getSuccessors(cnode.state): # Iterate through successors, making a child node for each
                 child = node(succ[0], succ[2], succ[1], cnode) # Initialize child node
                 if child.state not in explored: # Adds child to frontier if not in explored 
-                    frontier.push(child, child.cost + heuristic(child.state, problem)) #Problem needs to be fixed
+                    frontier.push(child, child.getPathCost() + heuristic(child.state, problem)) #Problem needs to be fixed
     util.raiseNotDefined()
 
 
