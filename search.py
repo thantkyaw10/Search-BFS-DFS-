@@ -108,31 +108,20 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    #util.raiseNotDefined()
-    explored = [] #list for states already explored
+    explored = [] #[node, action] ; list for states already explored
     frontier = util.Stack() #using stack data structure
-
-    current = [problem.getStartState(), []] #format: [current state exploring, path or actions from initial to current]
-    initialTo = util.Stack() #holds paths of each successecor getting explored; for them to then get explored
+    frontier.push((problem.getStartState(), []))
 
     #"Loop do" in psuedo code:
     while not frontier.isEmpty(): #"if empty? (frontier) then return failure"
-        if problem.isGoalState(current[0]): #"if problem.goal-test(state)...
-            return current[1]               # ...then return solution"
-        if current not in explored: #"If node.state not in explored:"
-            explored.append(current[0]) #"add node to explored"
-            for succ,action,cost in (problem.getSuccessors(current[0])): #add node's children to frontier
-                frontier.push(succ)
-                initialTo.push(current[1] + [action])
-        #go on to set the next to look at:
-        temp0 = frontier.pop()
-        temp1 = initialTo.pop()
-        current = [temp0, temp1]
-    return None #if frontier is empty and cannot find any solution for the given problem / start state
-
-# Line 122 Appending current[0] but checking for entire current, so check always returns true
-#Fix order of checking/popping
-#Maybe turn current into tuple and have first element be list, so no adding / modifying can be done
+        state, act = frontier.pop() #node <-- frontier.pop()
+        if problem.isGoalState(state): #"if problem.goal-test(node.state)...
+            return act     # ...then return solution(node)"
+        if state not in explored: #if node.state not in explored:
+            explored.append(state) #"add node to explored"
+            for succ in (problem.getSuccessors(state)): #add children to frontier
+                frontier.push((succ[0], act + [succ[1]]))
+    util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
