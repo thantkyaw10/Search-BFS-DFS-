@@ -18,6 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+import searchAgents
 
 class SearchProblem:
     """
@@ -79,6 +80,14 @@ class node:
             cnode = cnode.parent # Set current node to parent
         path.reverse()
         return path
+    
+    def getPathCost(self):
+        cost = 0
+        cnode = self
+        while (cnode.cost != 0):
+            cost += cnode.cost
+            cnode = cnode.parent
+        return cost
 
 
 
@@ -149,7 +158,22 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
+    startNode = node(problem.getStartState())# Initialize start node
+    if problem.isGoalState(startNode.state):
+        return [] # Return empty list if start is solution (no actions taken)
+    frontier = util.PriorityQueue()
+    frontier.push(startNode, 0) # Initialize frontier with startNode
+    explored = set()
+    while not frontier.isEmpty():
+        cnode = frontier.pop() # Pops shallowest node
+        if problem.isGoalState(cnode.state): # Checks goal state
+            return cnode.getPath()
+        if cnode.state not in explored:
+            explored.add(cnode.state)
+            for succ in problem.getSuccessors(cnode.state): # Iterate through successors, making a child node for each
+                child = node(succ[0], succ[2], succ[1], cnode) # Initialize child node
+                if child.state not in explored: # Adds child to frontier if not in explored 
+                    frontier.push(child, child.getPathCost()) #Problem needs to be fixed
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -159,9 +183,30 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+def manhattanHeuristic(position, problem, info={}):
+    "The Manhattan distance heuristic for a PositionSearchProblem"
+    xy1 = position
+    xy2 = problem.goal
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
+    startNode = node(problem.getStartState())# Initialize start node
+    if problem.isGoalState(startNode.state):
+        return [] # Return empty list if start is solution (no actions taken)
+    frontier = util.PriorityQueue()
+    frontier.push(startNode, 0) # Initialize frontier with startNode
+    explored = set()
+    while not frontier.isEmpty():
+        cnode = frontier.pop() # Pops shallowest node
+        if problem.isGoalState(cnode.state): # Checks goal state
+            return cnode.getPath()
+        if cnode.state not in explored:
+            explored.add(cnode.state)
+            for succ in problem.getSuccessors(cnode.state): # Iterate through successors, making a child node for each
+                child = node(succ[0], succ[2], succ[1], cnode) # Initialize child node
+                if child.state not in explored: # Adds child to frontier if not in explored 
+                    frontier.push(child, child.cost + heuristic(child.state, problem)) #Problem needs to be fixed
     util.raiseNotDefined()
 
 
