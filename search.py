@@ -76,8 +76,9 @@ class node:
         cnode = self # Sets current node to self
         while (cnode.action != 0):
             path.append(cnode.action) # Append current node's action to path
-            cnode = self.parent # Set current node to parent
-        return path.reverse
+            cnode = cnode.parent # Set current node to parent
+        path.reverse()
+        return path
 
 
 
@@ -129,13 +130,13 @@ def depthFirstSearch(problem):
         current = [temp0, temp1]
     return None #if frontier is empty and cannot find any solution for the given problem / start state
 
-#Appending current[0] but checking for entire current, so check always returns true
+# Line 122 Appending current[0] but checking for entire current, so check always returns true
 #Fix order of checking/popping
 #Maybe turn current into tuple and have first element be list, so no adding / modifying can be done
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    startNode = node(problem.getStartState)# Initialize start node
+    startNode = node(problem.getStartState())# Initialize start node
     if problem.isGoalState(startNode.state):
         return [] # Return empty list if start is solution (no actions taken)
     frontier = util.Queue()
@@ -145,14 +146,13 @@ def breadthFirstSearch(problem):
         cnode = frontier.pop() # Pops shallowest node
         if problem.isGoalState(cnode.state): # Checks goal state
             return cnode.getPath()
-        explored.add(cnode) # Add node to explored set
-        succs = problem.getSuccessors(cnode.state)
-        print(succs)
-        # for succ in succs: # Iterate through successors, making a child node for each
-        #     child = node(succ[0], succ[2], succ[1], cnode) # Initialize child node
-        #     if child not in explored: # Adds child to frontier if not in explored 
-        #         frontier.push(child)
-    return None
+        if cnode.state not in explored:
+            explored.add(cnode.state)
+            for succ in problem.getSuccessors(cnode.state): # Iterate through successors, making a child node for each
+                child = node(succ[0], succ[2], succ[1], cnode) # Initialize child node
+                if child.state not in explored: # Adds child to frontier if not in explored 
+                    frontier.push(child)
+    util.raiseNotDefined()
 
             
 
