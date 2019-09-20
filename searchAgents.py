@@ -280,7 +280,7 @@ class CornersProblem(search.SearchProblem):
         self.walls = startingGameState.getWalls()
         self.startingPosition = startingGameState.getPacmanPosition()
         top, right = self.walls.height-2, self.walls.width-2
-        self.corners = ((1,1), (1,top), (right, 1), (right, top))
+        self.corners = ((1,1), (1,top), (right, 1), (right, top)) # The last int keeps track of corner index
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
                 print 'Warning: no food in corner ' + str(corner)
@@ -288,21 +288,25 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        self.startState = self.startingPosition, 0, 0, 0, 0 # Initialize state where all four corners are unvisited
+        self.corners = ((1,1,1), (1,top,2), (right, 1, 3), (right, top,4)) # Update corners to include index
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.startState
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if state[1] and state[2] and state[3] and state[4]: # If all four corners are 1 we good
+            return 1
+        return 0
+
 
     def getSuccessors(self, state):
         """
@@ -325,6 +329,16 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            x,y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not self.walls[nextx][nexty]:
+                nextState = [(nextx, nexty), state[1], state[2], state[3], state[4]] # Initialize nextState with nextPos but old corners
+                for corner in self.corners: # Checks if next state is a corner
+                    if (nextx, nexty) == corner:
+                        nextState[corner[2]] = 1 # Updates appropriate corner to visited in State
+                nextState = tuple(nextState) # Tuplize nextState to keep things consistent
+                successors.append( ( nextState, action, 1) )
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
