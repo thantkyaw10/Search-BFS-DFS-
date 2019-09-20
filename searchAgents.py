@@ -335,7 +335,7 @@ class CornersProblem(search.SearchProblem):
             if not self.walls[nextx][nexty]:
                 nextState = [(nextx, nexty), state[1], state[2], state[3], state[4]] # Initialize nextState with nextPos but old corners
                 for corner in self.corners: # Checks if next state is a corner
-                    if (nextx, nexty) == corner:
+                    if (nextx, nexty) == (corner[0], corner[1]):
                         nextState[corner[2]] = 1 # Updates appropriate corner to visited in State
                 nextState = tuple(nextState) # Tuplize nextState to keep things consistent
                 successors.append( ( nextState, action, 1) )
