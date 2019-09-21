@@ -380,14 +380,13 @@ def cornersHeuristic(state, problem):
     #  state[0] is the tuple (x,y) of the pacman coordinates. So, state[0][0] is current x coord and state[0][1] is current y coord
     # dist calculations --> x-steps + y-steps = |change in x position| + |change in y position|
     if len(unReached)>0:
-        dist1 = min([abs(state[0][0] - xy2[0]) + abs(state[0][1] - xy2[1]) for xy2 in unReached])
-    
-    if state[1] + state[2] + state[3] + state[4] == 0:
+        dist1 = min([abs(state[0][1] - u[1]) + abs(state[0][0] - u[0]) for u in unReached]) #aim towards closest corner
+    if state[1] + state[2] + state[3] + state[4] == 0: #if none have been reached yet
         dist2 = abs(problem.corners[0][0] - problem.corners[1][0]) + abs(problem.corners[0][1] - problem.corners[1][1]) 
         dist3 = abs(problem.corners[0][0] - problem.corners[2][0]) + abs(problem.corners[0][1] - problem.corners[2][1]) 
         return dist1+dist2+dist3+min(dist2,dist3)
-    elif state[1] + state[2] + state[3] + state[4] == 1:
-        dist2 = max([abs(reached[0][0] - xy2[0]) + abs(reached[0][1] - xy2[1]) for xy2 in unReached])
+    elif state[1] + state[2] + state[3] + state[4] == 1: #if one has already been reached
+        dist2 = max([abs(reached[0][1] - u[1]) + abs(reached[0][0] - u[0]) for u in unReached])
         return dist1+dist2
     elif state[1] + state[2] + state[3] + state[4] == 2:
         dist2 = abs(unReached[0][0] - unReached[1][0]) + abs(unReached[0][1] - unReached[1][1])
