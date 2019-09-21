@@ -378,6 +378,7 @@ def cornersHeuristic(state, problem):
 
     #FORMAT / Clarifications:
     #  state[0] is the tuple (x,y) of the pacman coordinates. So, state[0][0] is current x coord and state[0][1] is current y coord
+    # dist calculations --> x-steps + y-steps = |change in x position| + |change in y position|
     if len(unReached)>0:
         dist1 = min([abs(state[0][0] - xy2[0]) + abs(state[0][1] - xy2[1]) for xy2 in unReached])
     
@@ -497,17 +498,16 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    #Goal is eating all food, searching through A* search.
-    # Admissability => must be that the cost <= true cost. 
-    # Use mazeDistance() for minimum distance between pacman and a given food 
-    # Goal is to eat all food, so heuristic = farthest food
+    # Admissability requires: the cost <= true cost. 
+    # Minimum distance between pacman and mazeDistance to farthest food (= heuristic)
     # => Farthest distance is the min actual cost, with all other food along the way
     # Admissible and consistent
     farFood = 0 #farthest/maximum food distance
-    for i in range(foodGrid.height): #for every position on grid...
-        for j in range(foodGrid.width): #for every position on grid...
-            distToFood = mazeDistance(position, (j,i), problem.startingGameState) #calculate distance between pacman and food
-            if (foodGrid[j][i]==1) and (distToFood > farFood): #if it farther than the so-far-farthest food...
+    distToFood = 0
+    foods = foodGrid.asList()
+    for x,y in foods: #for every point on the grid...
+        distToFood = mazeDistance(position, (x,y), problem.startingGameState) #calculate distance between that point and pacman
+        if (foodGrid[x][y]==1) and (distToFood > farFood): #if there is food it farther than the so-far-farthest food...
                 farFood = distToFood #... then update farFood
     return farFood
 
