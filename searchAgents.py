@@ -289,7 +289,7 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
         self.startState = self.startingPosition, 0, 0, 0, 0 # Initialize state where all four corners are unvisited
-        self.corners = ((1,1, 1), (1,top, 2), (right, 1, 3), (right, top,4)) # Update corners to include index
+        self.corners = ((1,1,1), (1,top,2), (right, 1, 3), (right, top,4)) # Update corners to include index
 
     def getStartState(self):
         """
@@ -371,18 +371,39 @@ def cornersHeuristic(state, problem):
     admissible (as well as consistent).
     """
     corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-    midx = corners[3][0] / 2
-    midy = corners[3][1] / 2
-    midpos = midx, midy #Calculate mid
-    "*** YOUR CODE HERE ***"
-    if state[1] + state[2] + state[3] + state[4] == 0: # 
-        farC = manhattanHeuristic(corners[0], midpos)
-        for corner in corners: # Calculates furtherst corner
-           if manhattanHeuristic(corner, midpos) > farC:
-               farC = manhattanHeuristic(corner, midpos)
-        return farC - manhattanHeuristic(midpos, state[0])
-    return 0# Default to trivial solution
+    #walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+
+    unReached = [problem.corners[i-1] for i in range(1,5) if state[i]==0] #corners that have not yet been reached
+    reached = [problem.corners[i-1] for i in range(1,5) if state[i]==1] #corners that have been reached already
+
+    #FORMAT / Clarifications:
+    #  state[0] is the tuple (x,y) of the pacman coordinates. So, state[0][0] is current x coord and state[0][1] is current y coord
+    if len(unReached)>0:
+        dist1 = min([abs(state[0][0] - xy2[0]) + abs(state[0][1] - xy2[1]) for xy2 in unReached])
+    
+    if state[1] + state[2] + state[3] + state[4] == 0:
+        dist2 = abs(problem.corners[0][0] - problem.corners[1][0]) + abs(problem.corners[0][1] - problem.corners[1][1]) 
+        dist3 = abs(problem.corners[0][0] - problem.corners[2][0]) + abs(problem.corners[0][1] - problem.corners[2][1]) 
+        return dist1+dist2+dist3+min(dist2,dist3)
+    elif state[1] + state[2] + state[3] + state[4] == 1:
+        dist2 = max([abs(reached[0][0] - xy2[0]) + abs(reached[0][1] - xy2[1]) for xy2 in unReached])
+        return dist1+dist2
+    elif state[1] + state[2] + state[3] + state[4] == 2:
+        dist2 = abs(unReached[0][0] - unReached[1][0]) + abs(unReached[0][1] - unReached[1][1])
+        return dist1+dist2
+    elif state[1] + state[2] + state[3] + state[4] == 3:
+        missingCorner = unReached[0] 
+        dist = abs(state[0][0] - missingCorner[0]) + abs(state[0][1] - missingCorner[1])
+        return dist
+    else: 
+        return 0
+        
+        #farC = manhattanHeuristic(corners[0], midpos)
+        #for corner in corners: # Calculates furtherst corner
+        #   if manhattanHeuristic(corner, midpos) > farC:
+        #       farC = manhattanHeuristic(corner, midpos)
+        #return farC - manhattanHeuristic(midpos, state[0])
+    
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -476,7 +497,19 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    #Goal is eating all food, searching through A* search.
+    # Admissability => must be that the cost <= true cost. 
+    # Use mazeDistance() for minimum distance between pacman and a given food 
+    # Goal is to eat all food, so heuristic = farthest food
+    # => Farthest distance is the min actual cost, with all other food along the way
+    # Admissible and consistent
+    farFood = 0 #farthest/maximum food distance
+    for i in range(foodGrid.height): #for every position on grid...
+        for j in range(foodGrid.width): #for every position on grid...
+            distToFood = mazeDistance(position, (j,i), problem.startingGameState) #calculate distance between pacman and food
+            if (foodGrid[j][i]==1) and (distToFood > farFood): #if it farther than the so-far-farthest food...
+                farFood = distToFood #... then update farFood
+    return farFood
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
