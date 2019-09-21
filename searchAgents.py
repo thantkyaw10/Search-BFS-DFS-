@@ -389,8 +389,7 @@ def cornersHeuristic(state, problem):
         dist2 = max([abs(reached[0][1] - u[1]) + abs(reached[0][0] - u[0]) for u in unReached]) #distances to remaining corners
         return dist1+dist2
     elif state[1] + state[2] + state[3] + state[4] == 2: #if two have been reached
-        dist2 = abs(unReached[0][0] - unReached[1][0]) + abs(unReached[0][1] - unReached[1][1])
-        return dist1+dist2
+        return dist1 + (abs(unReached[0][0] - unReached[1][0]) + abs(unReached[0][1] - unReached[1][1]))
     elif state[1] + state[2] + state[3] + state[4] == 3: #if 3 have been reached (1 left to reach)
         missingCorner = unReached[0] #head toward the one remaining corner
         return abs(state[0][0] - missingCorner[0]) + abs(state[0][1] - missingCorner[1]) 
@@ -499,7 +498,7 @@ def foodHeuristic(state, problem):
     # Admissability requires: the cost <= true cost. 
     # Minimum distance between pacman and mazeDistance to farthest food (= heuristic)
     # => Farthest distance is the min actual cost, with all other food along the way
-    # Admissible and consistent
+    # Admissible and consistent :)
     farFood = 0 #farthest/maximum food distance
     distToFood = 0
     foods = foodGrid.asList()
