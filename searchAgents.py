@@ -536,8 +536,13 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
         "*** YOUR CODE HERE ***"
+        foods = food.asList()
+        closeFood = foods[0]
+        for fod in foods: #for every point on the grid...
+            if mazeDistance(startPosition, fod, gameState) < mazeDistance(startPosition, closeFood, gameState):
+                closeFood = fod #calculate distance between that point and pacman
+        return search.bfs(problem)
         util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -574,7 +579,11 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        foods = self.food.asList()
+        for fod in foods:
+            if (x,y) == fod:
+                return 1
+        return 0
 
 def mazeDistance(point1, point2, gameState):
     """
